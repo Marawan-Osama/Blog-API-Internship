@@ -34,7 +34,6 @@ export const createComment = async (req, res) => {
   try {
     const { content } = req.body; // Extract comment content from the request body
     const user = req.user; // Access user information from the verified JWT
-    console.log(req.user);
 
     if (!user) {
       return res

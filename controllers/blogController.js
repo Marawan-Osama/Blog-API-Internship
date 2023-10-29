@@ -235,7 +235,6 @@ export const likeBlog = async (req, res) => {
         });
       }
     }
-    console.log(blog.likes);
     blog.likes.push(userId);
     await blog.save();
     res
