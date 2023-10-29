@@ -26,6 +26,7 @@ export const getAllBlogs = async (req, res) => {
       content: blog.content,
       authorName: blog.author.full_name,
       coAuthors: blog.co_authors.map((coAuthor) => coAuthor.email),
+      likes: blog.likes.length,
     }));
 
     res.status(StatusCodes.OK).json({ blogs: formattedBlogs });
@@ -116,6 +117,7 @@ export const getBlog = async (req, res) => {
       authorId: blog.author._id,
       authorName: blog.author.full_name,
       coAuthors: coAuthorsEmails,
+      likes: blog.likes.length,
     };
 
     res.status(StatusCodes.OK).json({ blog: modifiedBlog });
@@ -203,6 +205,39 @@ export const deleteBlog = async (req, res) => {
     res.status(StatusCodes.OK).json({ msg: 'Blog deleted successfully' });
   } catch (error) {
     console.error('Delete blog error:', error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ msg: 'Internal server error' });
+  }
+};
+
+export const likeBlog = async (req, res) => {
+  const blogId = req.params.blogId;
+  const userId = req.user.userId;
+  try {
+    const blog = await Blog.findById(blogId);
+    if (!blog) {
+      return res.status(StatusCodes.NOT_FOUND).json({ msg: 'Blog not found' });
+    }
+    if (blog.likes.includes(userId)) {
+      const index = blog.likes.indexOf(userId);
+      if (index > -1) {
+        blog.likes.splice(index, 1);
+        await blog.save();
+        return res.status(StatusCodes.OK).json({
+          msg: 'Blog like removed successfully',
+          likes: blog.likes.length,
+        });
+      }
+    }
+    console.log(blog.likes);
+    blog.likes.push(userId);
+    await blog.save();
+    res
+      .status(StatusCodes.OK)
+      .json({ msg: 'Blog liked successfully', likes: blog.likes.length });
+  } catch (error) {
+    console.error('Like blog error:', error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ msg: 'Internal server error' });

@@ -5,6 +5,7 @@ import {
   getBlog,
   updateBlog,
   deleteBlog,
+  likeBlog,
 } from '../controllers/blogController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 
@@ -17,5 +18,7 @@ router
   .get(verifyToken, getBlog)
   .patch(verifyToken, updateBlog)
   .delete(verifyToken, deleteBlog);
+
+router.route('/:blogId/like').patch(verifyToken, likeBlog);
 
 export default router;
