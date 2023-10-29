@@ -91,7 +91,6 @@ export const getBlog = async (req, res) => {
   const { blogId } = req.params;
 
   try {
-    // Fetch the specific blog by ID and populate the 'author' and 'co_authors' fields
     const blog = await Blog.findById(blogId).populate([
       {
         path: 'author',
@@ -110,10 +109,8 @@ export const getBlog = async (req, res) => {
     blog.view_count = blog.view_count + 1;
     await blog.save();
 
-    // Extract email addresses of co-authors
     const coAuthorsEmails = blog.co_authors.map((coAuthor) => coAuthor.email);
 
-    // Create a modified blog object with email addresses of co-authors
     const modifiedBlog = {
       _id: blog._id,
       title: blog.title,
@@ -135,11 +132,10 @@ export const getBlog = async (req, res) => {
 };
 
 export const updateBlog = async (req, res) => {
-  const blogId = req.params.blogId; // Extract the blog ID from the route parameters
-  const { title, content, co_authors } = req.body; // Extract the updated title, content, and co_authors from the request body
+  const blogId = req.params.blogId;
+  const { title, content, co_authors } = req.body;
 
   try {
-    // Query the database to find the blog by its ID and update it
     const updatedBlog = await Blog.findByIdAndUpdate(
       blogId,
       { title, content },
@@ -150,25 +146,20 @@ export const updateBlog = async (req, res) => {
       return res.status(StatusCodes.NOT_FOUND).json({ msg: 'Blog not found' });
     }
 
-    // Add new co-authors to the blog
     if (co_authors && Array.isArray(co_authors)) {
       for (const email of co_authors) {
         const user = await User.findOne({ email });
         if (user) {
-          // Check if the user is not already a co-author
           if (!updatedBlog.co_authors.includes(user._id)) {
             updatedBlog.co_authors.push(user._id);
           }
         }
       }
-      // Save the updated blog with new co-authors
       await updatedBlog.save();
     }
 
-    // Get the author's data
     const author = await User.findById(updatedBlog.author);
 
-    // Extract email addresses of co-authors
     const coAuthorsEmails = [];
     for (const coAuthorId of updatedBlog.co_authors) {
       const coAuthor = await User.findById(coAuthorId);
@@ -177,7 +168,6 @@ export const updateBlog = async (req, res) => {
       }
     }
 
-    // Create a modified blog object with email addresses of co-authors
     const modifiedBlog = {
       _id: updatedBlog._id,
       title: updatedBlog.title,
@@ -197,10 +187,9 @@ export const updateBlog = async (req, res) => {
 };
 
 export const deleteBlog = async (req, res) => {
-  const blogId = req.params.blogId; // Extract the blog ID from the route parameters
+  const blogId = req.params.blogId;
 
   try {
-    // Query the database to find the blog by its ID and delete it
     const deletedBlog = await Blog.findByIdAndDelete(blogId);
 
     if (!deletedBlog) {

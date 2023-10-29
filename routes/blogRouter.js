@@ -11,7 +11,6 @@ import { verifyToken } from '../middleware/verifyToken.js';
 
 const router = Router();
 
-// Use verifyToken middleware to check the user's token
 router.route('/').get(verifyToken, getAllBlogs).post(verifyToken, createBlog);
 router
   .route('/:blogId')

@@ -7,12 +7,12 @@ const CommentSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'User',
     required: [true, 'Please provide the associated user'],
   },
   blog: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Blog', // Reference to the Blog model
+    ref: 'Blog',
     required: [true, 'Please provide the associated blog'],
   },
 });

@@ -9,7 +9,6 @@ export const getAllComments = async (req, res) => {
       .populate('user', 'full_name')
       .exec();
 
-    // Map comments to include comment ID, content, and user's name (if available)
     const commentsData = comments.map((comment) => {
       const userName = comment.user ? comment.user.full_name : 'Unknown User';
       return {
@@ -29,11 +28,11 @@ export const getAllComments = async (req, res) => {
 };
 
 export const createComment = async (req, res) => {
-  const blogId = req.params.blogId; // Extract the blog ID from the route parameters
+  const blogId = req.params.blogId;
 
   try {
-    const { content } = req.body; // Extract comment content from the request body
-    const user = req.user; // Access user information from the verified JWT
+    const { content } = req.body;
+    const user = req.user;
 
     if (!user) {
       return res
@@ -41,14 +40,12 @@ export const createComment = async (req, res) => {
         .json({ msg: 'Unauthorized - User not found in the JWT token' });
     }
 
-    // Create a new comment with the provided content, user, and blog
     const newComment = new Comment({
       content,
-      user: user.userId, // Use the authenticated user's ID
-      blog: blogId, // Blog ID
+      user: user.userId,
+      blog: blogId,
     });
 
-    // Save the new comment to the database
     const createdComment = await newComment.save();
 
     res.status(StatusCodes.CREATED).json({ comment: createdComment });
@@ -75,7 +72,6 @@ export const getComment = async (req, res) => {
         .json({ msg: 'Comment not found' });
     }
 
-    // Extract the relevant information from the comment and user
     const commentData = {
       _id: comment._id,
       content: comment.content,
@@ -96,10 +92,8 @@ export const updateComment = async (req, res) => {
   const user = req.user;
 
   try {
-    // Get the authenticated user
-    const { content } = req.body; // Extract the updated content from the request body
+    const { content } = req.body;
 
-    // Find the comment by ID
     const comment = await Comment.findById(commentId);
 
     if (!comment) {
@@ -108,14 +102,12 @@ export const updateComment = async (req, res) => {
         .json({ msg: 'Comment not found' });
     }
 
-    // Check if the authenticated user is the owner of the comment
     if (comment.user.toString() !== user.userId.toString()) {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ msg: 'You are not authorized to update this comment' });
     }
 
-    // Update the comment
     const updatedComment = await Comment.findByIdAndUpdate(
       commentId,
       { content },
@@ -135,9 +127,6 @@ export const deleteComment = async (req, res) => {
   const commentId = req.params.commentId;
   const user = req.user;
   try {
-    // Get the authenticated user
-
-    // Find the comment by ID
     const comment = await Comment.findById(commentId);
 
     if (!comment) {
@@ -146,14 +135,12 @@ export const deleteComment = async (req, res) => {
         .json({ msg: 'Comment not found' });
     }
 
-    // Check if the authenticated user is the owner of the comment
     if (comment.user.toString() !== user.userId.toString()) {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ msg: 'You are not authorized to delete this comment' });
     }
 
-    // Delete the comment
     await Comment.findByIdAndDelete(commentId);
 
     res.status(StatusCodes.OK).json({ msg: 'Comment deleted successfully' });
