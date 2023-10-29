@@ -16,6 +16,12 @@ const BlogSchema = new mongoose.Schema({
     ref: 'User',
     required: [true, 'Please provide author'],
   },
+  co_authors: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 export default mongoose.model('Blog', BlogSchema);
