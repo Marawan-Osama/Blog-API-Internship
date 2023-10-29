@@ -27,6 +27,7 @@ export const getAllBlogs = async (req, res) => {
       authorName: blog.author.full_name,
       coAuthors: blog.co_authors.map((coAuthor) => coAuthor.email),
       likes: blog.likes.length,
+      view_count: blog.view_count,
     }));
 
     res.status(StatusCodes.OK).json({ blogs: formattedBlogs });
@@ -106,6 +107,9 @@ export const getBlog = async (req, res) => {
       return res.status(StatusCodes.NOT_FOUND).json({ msg: 'Blog not found' });
     }
 
+    blog.view_count = blog.view_count + 1;
+    await blog.save();
+
     // Extract email addresses of co-authors
     const coAuthorsEmails = blog.co_authors.map((coAuthor) => coAuthor.email);
 
@@ -118,6 +122,7 @@ export const getBlog = async (req, res) => {
       authorName: blog.author.full_name,
       coAuthors: coAuthorsEmails,
       likes: blog.likes.length,
+      view_count: blog.view_count,
     };
 
     res.status(StatusCodes.OK).json({ blog: modifiedBlog });

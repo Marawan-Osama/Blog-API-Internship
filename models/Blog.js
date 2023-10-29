@@ -28,6 +28,10 @@ const BlogSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  view_count: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default mongoose.model('Blog', BlogSchema);
