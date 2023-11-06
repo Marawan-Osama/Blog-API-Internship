@@ -42,9 +42,6 @@ const router = Router();
  *             content:
  *               type: string
  *               description: The content of the blog. (Required)
- *             author:
- *               type: string
- *               description: The ID of the author. (Required)
  *             co_authors:
  *               type: array
  *               items:

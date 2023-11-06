@@ -103,6 +103,16 @@ const router = Router();
  *         required: true
  *         schema:
  *           type: string
+ *       - in: body
+ *         name: Update Comment
+ *         description: Update a comment.
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             content:
+ *               type: string
+ *               description: The content of the comment. (Required)
  *     responses:
  *       200:
  *         description: Comment deleted successfully
