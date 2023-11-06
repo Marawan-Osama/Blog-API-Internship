@@ -9,6 +9,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 dotenv.config();
 
@@ -32,6 +34,21 @@ app.use(express.json());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/blogs', blogRouter);
 app.use('/api/v1/blogs', commentRouter);
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'Blog REST API',
+      description:
+        'A REST API built with Express and MongoDB. This API provides movie catchphrases and the context of the catchphrase in the movie.',
+    },
+  },
+  apis: ['./routes/*'],
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const port = process.env.PORT || 5001;
 try {

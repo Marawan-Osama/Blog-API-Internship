@@ -35,7 +35,7 @@ export const login = async (req, res) => {
 
     const token = user.createJWT();
     res.cookie('token', token, { httpOnly: true, sameSite: 'strict' });
-    res.status(StatusCodes.OK).json({ user: { name: user.full_name } });
+    res.status(StatusCodes.OK).json({ user: { name: user.full_name }, token });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ msg: error });
   }
